@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminPassword": {
+      "value": ""
+    },
+    "adminUsername": {
+      "value": "localadmin"
+    },
+    "AVSet": {
+      "value": "False"
+    },
+    "existingDomainName": {
+      "value": "wpdev.local"
+    },
+    "existingSubnetName": {
+      "value": "adSubnet"
+    },
+    "existingVirtualNetworkName": {
+      "value": "adVNET"
+    },
+    "existingVirtualNetworkRGName": {
+      "value": "rajnaomitest"
+    },
+    "ResourcenamePrefix": {
+      "value": "dev.we.core.sql.01"
+    },
+    "svcPassword": {
+      "value": "SQLadmin2018!"
+    },
+    "svcUsername": {
+      "value": "sqladmin"
+    },
+    "vmDiskCount": {
+      "value": 2
+    },
+    "vmDiskSize": {
+      "value": 1023
+    },
+    "VMnamePrefix": {
+      "value": "NLADVM"
+    },
+    "vmSize": {
+      "value": "Standard_D2s_v3"
+    }
+  }
