@@ -179,6 +179,9 @@
           },
           "_artifactsLocationSasToken": {
             "value": "[parameters('_artifactsLocationSasToken')]"
+          },
+          "AVSet": {
+            "value": "[parameters('AVSet')]"
           }
         }        
       },
