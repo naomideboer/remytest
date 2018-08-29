@@ -29,14 +29,6 @@
         "description": "Should an AV set be created? True of False"
       }
     },
-    "Clusterprefix": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 12,
-      "metadata": {
-        "description": "Cluster Naming prefix for each new resource created. 3-char min, 8-char max, lowercase alphanumeric"
-      }
-    },
     "domainName": {
       "type": "string",
       "metadata": {
@@ -67,12 +59,6 @@
       "minLength": 8,
       "metadata": {
         "description": "Password for the Service Account in the existing Active Directory Domain"
-      }
-    },
-    "clusterIP": {
-      "type": "string",
-      "metadata": {
-        "description": "IP Address of the cluster"
       }
     },
     "nicSubnetUri": {
