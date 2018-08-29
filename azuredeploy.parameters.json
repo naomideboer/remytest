@@ -9,7 +9,7 @@
       "value": "localadmin"
     },
     "AVSet": {
-      "value": "False"
+      "value": "True"
     },
     "existingDomainName": {
       "value": "wpdev.local"
@@ -39,7 +39,7 @@
       "value": 1023
     },
     "VMnamePrefix": {
-      "value": "NLADVM"
+      "value": "nladvmw"
     },
     "vmSize": {
       "value": "Standard_D2s_v3"

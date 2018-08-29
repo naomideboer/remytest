@@ -122,7 +122,7 @@
   },
   "variables": {
     "apiVersionStorage": "2016-01-01",
-    "vmNametypePrefix": "[concat(parameters('VMnamePrefix'),'db')]",
+    "vmNametypePrefix": "[concat(parameters('VMnamePrefix'),'ap')]",
     "vmAvailabilitySetName": "[concat(parameters('ResourcenamePrefix'),'.as')]",
     "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/newVM.json',parameters('_artifactsLocationSasToken'))]",
     "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip',parameters('_artifactsLocationSasToken'))]",
