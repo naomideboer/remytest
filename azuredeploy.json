@@ -29,14 +29,6 @@
         "description": "Naming prefix for each new resource created. 3-char min, 8-char max, lowercase alphanumeric."
       }
     },
-    "ClusterPrefix": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 12,
-      "metadata": {
-        "description": "Naming prefix for each new resource created. 3-char min, 8-char max, lowercase alphanumeric."
-      }
-    },
     "vmSize": {
       "type": "string",
       "metadata": {
@@ -110,12 +102,6 @@
       "type": "string",
       "metadata": {
         "description": "Name of a pre-existing subnet to connect the SQL Cluster to."
-      }
-    },
-    "clusterIP": {
-      "type": "string",
-      "metadata": {
-        "description": "A free IP Address on the selected subnet for the SQL Cluster & load balancer."
       }
     },
     "_artifactsLocation": {
