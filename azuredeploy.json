@@ -16,7 +16,7 @@
         "True",
         "False"
       ],
-      "DefaultValue": "False",
+      "DefaultValue": "True",
       "metadata": {
         "description": "Should an AV set be created? True of False"
       }
