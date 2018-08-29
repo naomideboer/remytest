@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "adminPassword": {
-      "value": ""
+      "value": "@gr1f1rm@dm1n!"
     },
     "adminUsername": {
       "value": "localadmin"
@@ -45,3 +45,4 @@
       "value": "Standard_D2s_v3"
     }
   }
+}

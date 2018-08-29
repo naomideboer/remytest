@@ -119,18 +119,18 @@
       }
     },
     "_artifactsLocation": {
-      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/naomideboer/remytest/master",
       "metadata": {
         "description": "Location of resources that the script is dependent on such as linked templates and DSC modules"
       },
-      "defaultValue": "https://raw.githubusercontent.com/naomideboer/azure-quickstart-templates/msbrettwip/SQLFCI"
+      "type": "string"
     },
     "_artifactsLocationSasToken": {
-      "type": "securestring",
+      "defaultValue": "",
       "metadata": {
         "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
       },
-      "defaultValue": ""
+      "type": "securestring"
     }
   },
   "variables": {

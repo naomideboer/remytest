@@ -146,7 +146,7 @@
   },
   "resources": [
     {
-      "condition": "[equals(parameters('AVSet'),'True')]", 
+      "condition": "[equals(parameters('AVSet'),'True')]",
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[variables('vmAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
@@ -280,5 +280,6 @@
       },
       "type": "Microsoft.Compute/virtualMachines/extensions"
     }
+  ]
       
 }
