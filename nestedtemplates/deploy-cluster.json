@@ -124,10 +124,10 @@
     "apiVersionStorage": "2016-01-01",
     "vmNametypePrefix": "[concat(parameters('VMnamePrefix'),'ap')]",
     "vmAvailabilitySetName": "[concat(parameters('ResourcenamePrefix'),'.as')]",
-    "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/newVM.json',parameters('_artifactsLocationSasToken'))]",
-    "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip',parameters('_artifactsLocationSasToken'))]",
+    "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/newVM.json')]",
+    "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip')]",
     "sfciPrepFunction": "PrepSFCI.ps1\\PrepSFCI",
-    "sfciConfigModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/config-sfci.ps1.zip',parameters('_artifactsLocationSasToken'))]",
+    "sfciConfigModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/config-sfci.ps1.zip')]",
     "sfciConfigFunction": "ConfigSFCI.ps1\\ConfigSFCI"
   },
   "resources": [
