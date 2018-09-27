@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "windowssku": {
+      "value": "2016-Datacenter"
+    },
+    "deployment": {
+      "value": "dev"
+    },
+    "subnetName": {
+      "value": "vlan750 Infra MGMT"
+    },
+    "virtualMachineNamePrefix": {
+      "value": "wad"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_DS2_v2"
+    },
+    "numberOfVMs": {
+      "value": 1
+    },
+    "numberOfDataDisks": {
+      "value": 1
+    },
+    "sizeOfDataDisksInGB": {
+      "value": "64"
+       },
+    "domainname": {
+      "value": "wp.dev.local"
+    },
+    "automation": {
+      "value": "7x24"
+    }
+  }
+}

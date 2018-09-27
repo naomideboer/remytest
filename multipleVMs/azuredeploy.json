@@ -1,0 +1,328 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "windowssku": {
+      "type": "string",
+      "allowedValues": [
+        "2016-Datacenter",
+        "2012-R2-Datacenter",
+        "2008-R2-SP1"
+      ],
+      "defaultValue": "2016-Datacenter",
+      "metadata": {
+        "description": "Select the required Windows version"
+      }
+    },
+    "deployment": {
+      "type": "string",
+      "allowedValues": [
+        "dev",
+        "prod",
+        "acc"
+      ],
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Select the Deployment environment"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "allowedValues": [
+        "vlan200 Transit LAN",
+        "vlan740 DMZ",
+        "vlan750 Infra MGMT",
+        "vlan751 Frontend Servers",
+        "vlan760 Backend Servers",
+        "vlan761 KA clients (RDSH)"
+      ],
+      "defaultValue": "vlan750 Infra MGMT",
+      "metadata": {
+        "description": "Select the Subnet."
+      }
+    },
+    "virtualMachineNamePrefix": {
+      "type": "string",
+      "allowedValues": [
+        "wad",
+        "waf",
+        "wap",
+        "wbo",
+        "wca",
+        "wdb",
+        "wex",
+        "wfs",
+        "wft",
+        "wfv",
+        "whv",
+        "why",
+        "wmn",
+        "wnf",
+        "wpr",
+        "wrg",
+        "wrh",
+        "wsa",
+        "wwe"
+      ],
+      "defaultValue": "wap",
+      "metadata": {
+        "description": "AD=Domain Controller;<br>AF=Application Firewall;<br>AP=Application Server;<br>BO=Branch Office;<br>CA=Certificate Authority;<br>DB=Database ServerEX=Exchange Server;<br>FS=File Server;<br>FT=FTP Server;<br>FV=File Server Virtual Node;<br>HV=Hypervisor Virtual Node;<br>HY=Hypervisor;<br>MN=Management Node;<br>NF=Network Firewall;<br>PR=Print Server;<br>RG=Remote Desktop Services Generic;<br>RH=Remote Desktop Services Host;<br>SA=SAP Role;<br>WE=Web Server"
+      }
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS2_v2",
+      "metadata": {
+        "description": "Vm size"
+      }
+    },
+    "numberOfVMs": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 9,
+      "metadata": {
+        "description": "Number of VMs to deploy"
+      }
+    },
+    "numberOfDataDisks": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 9,
+      "metadata": {
+        "description": "Number of dataDisks (max 9)"
+      }
+    },
+    "sizeOfDataDisksInGB": {
+      "type": "string",
+      "allowedValues": [
+        "32",
+        "64",
+        "128",
+        "256",
+        "512",
+        "1023",
+        "2047",
+        "4094"
+      ],
+      "defaultValue": "64",
+      "metadata": {
+        "description": "Size of the data disk in GB (P4=32, P6=64, P10=128, P15=256, P20=512, P30=1023, P40=2047, P50=4094)."
+      }
+    },
+    "configurationModuleUrl": {
+      "type": "string",
+      "defaultValue": "https://devwemgmtsa001.blob.core.windows.net/deployment/dsc_DC.zip"
+    },
+    "extensionFunction": {
+      "type": "string",
+      "defaultValue": "DSC.ps1\\Main"
+    },
+    "domainname": {
+      "type": "string",
+      "defaultValue": "wp.dev.local"
+    },
+    "automation": {
+      "type": "string",
+      "allowedValues": [
+        "7x24",
+        "5x16",
+        "ondemand"
+      ],
+      "defaultValue": "7x24",
+      "metadata": {
+        "description": "Automation Tag"
+      }
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
+    }
+  },
+  "variables": {
+    "location": "westeurope",
+    "virtualNetworkName": "[concat(parameters('deployment'),'.we.net.001.vn')]",
+    "networkSecurityGroupName": "[concat(parameters('deployment'),'.we.net.001.nsg003')]",
+    "vnetshort": "[split(variables('virtualNetworkName'),'.vn')[0]]",
+    "vnetId": "[resourceId(variables('vnetshort'),'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "subnetnumber": "[substring(parameters('subnetName'), 0, 7)]",
+    "subnetfull": "[concat(variables('vnetshort'),'.', variables('subnetnumber'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetfull'))]",
+    "deployshort": "[substring(parameters('deployment'), 0, 1)]",
+    "vmname": "[concat('nla', variables('deployshort'), 'vm',parameters('virtualMachineNamePrefix'))]",
+    "diagnosticsStorageAccountName": "[concat(parameters('deployment'),'we',parameters('virtualMachineNamePrefix'),'sa000')]",
+    "diagnosticsStorageAccountType": "Standard_LRS",
+    "diagnosticsStorageAccountKind": "StorageV2",
+    "adminUsername": "[concat('agfadmin', parameters('virtualMachineNamePrefix'))]",
+    "adminPassword": "Fr3shinstall!",
+    "adpassword": "@gr1f1rm@dm1n!",
+    "dsc01ArchiveFolder": "DSC",
+    "dsc01ArchiveFileName": "dsc01.zip"
+  },
+  "resources": [
+    {
+      "name": "[concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'))]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-04-01",
+      "location": "[variables('location')]",
+      "tags": {
+        "Automation": "[parameters('automation')]"
+      },
+      "copy": {
+        "name": "virtualMachineLoop",
+        "count": "[parameters('numberOfVMs')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticsStorageAccountName'))]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "[concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'))]",
+          "adminUsername": "[concat(variables('adminUsername'), padLeft(string(copyIndex(1)), 3, '0'))]",
+          "adminPassword": "[variables('adminPassword')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('windowssku')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'), '.osd001')]",
+            "createOption": "fromImage",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            }
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[parameters('numberOfDataDisks')]",
+              "input": {
+                "caching": "ReadWrite",
+                "diskSizeGB": "[parameters('sizeOfDataDisksInGB')]",
+                "lun": "[copyIndex('dataDisks')]",
+                "name": "[concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'), '.dad', padLeft(string(copyIndex(1)), 3, '0'))]",
+                "createOption": "Empty"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'),'.nic001'))]"
+            }
+          ]
+        },
+        "licenseType": "Windows_Server",
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('https://', variables('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+          }
+        }
+      },
+      "resources": [
+        
+
+
+
+      ]
+    },
+    {
+      "name": "[variables('diagnosticsStorageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2018-02-01",
+      "location": "[variables('location')]",
+      "properties": {},
+      "kind": "[variables('diagnosticsStorageAccountKind')]",
+      "sku": {
+        "name": "[variables('diagnosticsStorageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[parameters('numberOfVMs')]"
+      },
+      "dependsOn": [],
+      "location": "[variables('location')]",
+      "name": "[concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'),'.nic001')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat('ipconfig1', copyIndex(1))]",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId(variables('vnetshort'), 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+        },
+        "enableAcceleratedNetworking": true
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2017-12-01",
+      "comments": "This VM DSC extension prepares the second cluster node",
+      "copy": {
+        "name": "virtualMachineExtensionLoop",
+        "count": "[parameters('numberOfVMs')]"
+      },
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('vmname'), padLeft(string(copyIndex(1)), 3, '0'), '/config')]",
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.20",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "modulesUrl": "[concat(parameters('_artifactsLocation'), '/', variables('dsc01ArchiveFolder'), '/', variables('dsc01ArchiveFileName'))]",
+          "configurationFunction": "dsc01.ps1\\Main",
+          "properties": {
+            "adminCreds": {
+              "password": "PrivateSettingsRef:adminPassword",
+              "userName": "[variables('adminUserName')]"
+            },
+            "domainName": "[parameters('domainName')]"
+          }
+        },
+        "protectedSettings": {
+          "items": {
+            "adminPassword": "[variables('adminPassword')]"
+            }
+        }
+      },
+      "type": "Microsoft.Compute/virtualMachines/extensions"
+    }
+
+  ],
+  "outputs": {
+    "adminUsername": {
+      "type": "string",
+      "value": "[variables('adminUsername')]"
+    }
+  }
+}
